@@ -10,14 +10,14 @@ int samples = 8; // detail level for spectrum (power of 2)
 int fps = 60; // frames (i.e. calls to draw()) per second
 float[] cSpc; // Current spectrum array
 SerialCom serial;
-boolean sendToArduino = false;
+boolean sendToArduino = true;
 
 void setup() {
   size(w, h);
   Sonia.start(this);
   cSpc = new float[samples];
   if (sendToArduino) {
-    serial = new SerialCom((new Serial(this, Serial.list()[0], 9600)));
+    serial = new SerialCom((new Serial(this, Serial.list()[5], 9600)));
   }
   sThread = new SampleThread(sps, samples);
   sThread.start();
