@@ -1,53 +1,58 @@
-
 import pitaru.sonia_v2_9.*;
 
 Sample bubbles;
+SampleThread sThread;
 
 int w=1000, h=100;
+int sps = 5; // desired samples per second
+int samples = 8; // detail level for spectrum (power of 2)
+int fps = 60; // frames (i.e. calls to draw()) per second
+float[] cSpc; // Current spectrum array
 
 void setup() {
   size(w, h);
   Sonia.start(this);
-  bubbles = new Sample("chimes.wav");
-  //bubbles.play(); // play once
-  LiveInput.start(8);
-  //bubbles.connectLiveInput(true);
-  //bubbles.play();
+  cSpc = new float[samples];
+
+  sThread = new SampleThread(sps, samples);
+  sThread.start();
 }
 
 void draw() {
   background(100, 100, 100);
-  LiveInput.getSpectrum(); // populate spectrum
-  float[] spc = LiveInput.spectrum;
+
+  float[] spc = sThread.getSpectrum();
   float[] lvls = getLevels();
-  //println(lvls[0]*255*10000);
+
   background(0, 0, 0);
 
-  for (int i = 0; i < spc.length; i++) {
-    line(i, 100, i, 100-spc[i]/10);
+  // Update current spectrum to approach cSpc from SampleThread
+  for (int i = 0; i < samples; i++) {
+    cSpc[i] += (spc[i]-cSpc[i])/(fps-20); 
   }
-  //println(spc[255]);
 
   // Let's make a line
-  for (int i = 0; i < spc.length; i++) {
+  for (int i = 0; i < cSpc.length; i++) {
     // Calculate color from spectrum
-    fill(spc[i]/500*255, spc[(i+1)%spc.length]/500*255, spc[(i+2)%spc.length]/500*255);
-    rect(i*(w/spc.length),0,w/spc.length,h);
+    fill(cSpc[i]/500*255, cSpc[(i+1)%cSpc.length]/500*255, cSpc[(i+2)%cSpc.length]/500*255);
+    rect(i*(w/cSpc.length), 0, w/cSpc.length, h);
+  }
+
+  for (int i = 0; i < cSpc.length; i++) {
+    line(i*(w/cSpc.length), 0, (i+1)*(w/cSpc.length), h-cSpc[i]/10);
   }
 }
-
-
 
 float[] getLevels() {
   return new float[] {
     LiveInput.getLevel(0), LiveInput.getLevel(1)
-  };
-}
+    };
+  }
 
-void stop() {
-  LiveInput.stop();
+  void stop() {
+    LiveInput.stop();
 
-  Sonia.stop();
-  super.stop();
-}
+    Sonia.stop();
+    super.stop();
+  }
 
