@@ -21,6 +21,7 @@ void setup() {
   }
   sThread = new SampleThread(sps, samples);
   sThread.start();
+  thread("readSerial");
 }
 
 void draw() {
@@ -67,5 +68,11 @@ float[] getLevels() {
 
     Sonia.stop();
     super.stop();
+  }
+  
+  void readSerial(){
+     while(serial.available()){
+        println(serial.read());
+     } 
   }
 
