@@ -9,25 +9,36 @@ void setup() {
   bubbles = new Sample("bubbles.wav");
   //bubbles.play(); // play once
   LiveInput.start(128);
-  bubbles.connectLiveInput(true);
-  bubbles.play();
+  //bubbles.connectLiveInput(true);
+  //bubbles.play();
 }
 
 void draw() {
-  background(100,100,100);
+  background(100, 100, 100);
   LiveInput.getSpectrum(); // populate spectrum
   float[] spc = LiveInput.spectrum;
-  background(spc[20], spc[20], spc[20]);
-  for(int i = 0; i < spc.length; i++){
-      line(i,100,i,100-spc[i]/10);
+
+  float[] lvls = getLevels();
+ background(lvls[0],lvls[0],lvls[0]);
+
+  for (int i = 0; i < spc.length; i++) {
+    line(i, 100, i, 100-spc[i]/10);
   }
   //println(spc[255]);
+
+  // Let's make a grid
 }
 
-void stop() {
-  LiveInput.stop();
+float[] getLevels() {
+  return new float[] {
+    LiveInput.getLevel(0), LiveInput.getLevel(1)
+    };
+  }
 
-  Sonia.stop();
-  super.stop();
-}
+  void stop() {
+    LiveInput.stop();
+
+    Sonia.stop();
+    super.stop();
+  }
 
