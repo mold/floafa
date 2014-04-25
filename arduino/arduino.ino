@@ -19,30 +19,31 @@ void setup()
 
 void loop()
 {
-  while (Serial.available() > 0) {
+  while (Serial.available() > 8*4) {
     for (int i=0; i<8; i++){
       if(i==0){
-        setColor(Serial.parseInt(),Serial.parseInt(),Serial.parseInt());
+        setColor(Serial.read(),Serial.read(),Serial.read());
       }
       else{
-        Serial.parseInt();
-        Serial.parseInt();
-        Serial.parseInt();
+        Serial.read();
+        Serial.read();
+        Serial.read();
       }
     }
+    Serial.flush();
 
   }
 
-//  setColor(0, 29, 255);  // red
-//  delay(3000);
-//  setColor(74, 12, 232);  // green
-//  delay(3000);
-//  setColor(174, 0, 255);  // blue
-//  delay(3000);
-//  setColor(232, 12, 197);  // yellow
-//  delay(3000);  
-//  setColor(255, 55, 42);  // purple
-//  delay(3000);
+  //  setColor(0, 29, 255);  // red
+  //  delay(3000);
+  //  setColor(74, 12, 232);  // green
+  //  delay(3000);
+  //  setColor(174, 0, 255);  // blue
+  //  delay(3000);
+  //  setColor(232, 12, 197);  // yellow
+  //  delay(3000);  
+  //  setColor(255, 55, 42);  // purple
+  //  delay(3000);
 }
 
 void setColor(int red, int green, int blue)
@@ -57,5 +58,7 @@ void setColor(int red, int green, int blue)
   analogWrite(bluePin, blue); 
 
 }
+
+
 
 
