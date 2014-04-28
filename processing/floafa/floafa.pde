@@ -134,16 +134,16 @@ void sendColors(float[][] colors) {
  * Updates the aggSound variable to get the color spectrum
  */
 float updateAggSound() {
-  int coolDownPeriod = 30;  // Number of seconds for "cooldown"
+  int coolDownPeriod = 10;  // Number of seconds for "cooldown"
   float level = LiveInput.getLevel();
-  float threshold = 0.3;  // If level is above this, increase aggSound else decrease
+  float threshold = 0.03;  // If level is above this, increase aggSound else decrease
+  float change = 1.0/coolDownPeriod/fps;  // How much to change at each update
 
-  float change = 1/coolDownPeriod/fps;  // How much to change at each update
   if (level >= threshold) {
     aggSound = Math.min(aggSound+change, 1);
   }
   else {
-    aggSound = Math.max(aggSound-1, 0);
+    aggSound = Math.max(aggSound-change, 0);
   }
 
   return aggSound;
