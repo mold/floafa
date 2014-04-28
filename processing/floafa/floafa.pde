@@ -68,12 +68,12 @@ void draw() {
     }
 
     // Calculate brightness from spectrum
-    float brightness = Math.max(cSpc[i]/specmax, 0.5);
+    float brightness = Math.max(cSpc[i]/specmax, 0.2);
 
     // Calculate color that changes over time
-    colorMode(RGB, 255);
     color thiscolor = lerpColor(from, to, aggSound);
     colorMode(HSB, 1.0);
+    println(hue(thiscolor));
     thiscolor = color(hue(thiscolor), 1, brightness);
     colorMode(RGB, 255);
     colors[i][0] = red(thiscolor);
@@ -82,12 +82,10 @@ void draw() {
 
 
     /*
-    colors[i][0] = cSpc[i]/2000*255;
+    colors[i][0] = cSpc[i]/2000*255;*/
      println("Red: "+ colors[i][0] + ", original: " + cSpc[i]);
-     colors[i][1] = cSpc[(i+1)%cSpc.length]/2000*255;
      println("Green: " + colors[i][1] + ", original: " + cSpc[(i+1)%cSpc.length]);
-     colors[i][2] = cSpc[(i+2)%cSpc.length]/2000*255;
-     println("Blue: " + colors[i][2] + ", original: " + cSpc[(i+2)%cSpc.length]);*/
+     println("Blue: " + colors[i][2] + ", original: " + cSpc[(i+2)%cSpc.length]);
     fill(colors[i][0], colors[i][1], colors[i][2]);
     rect(i*(w/cSpc.length), 0, w/cSpc.length, h);
   }
@@ -134,23 +132,25 @@ void sendColors(float[][] colors) {
  * Updates the aggSound variable to get the color spectrum
  */
 float updateAggSound() {
-  int coolDownPeriod = 10;  // Number of seconds for "cooldown"
+  int coolDownPeriodShort = 2;  // Number of seconds for "cooldown"
+  int coolDownPeriodLong = 5;
   float level = LiveInput.getLevel();
   float threshold = 0.03;  // If level is above this, increase aggSound else decrease
-  float change = 1.0/coolDownPeriod/fps;  // How much to change at each update
+  float changeUp = 1.0/coolDownPeriodLong/fps;
+  float changeDown = 1.0/coolDownPeriodShort/fps;  // How much to change at each update
 
   if (level >= threshold) {
-    aggSound = Math.min(aggSound+change, 1);
+    aggSound = Math.min(aggSound+changeUp, 1);
   }
   else {
-    aggSound = Math.max(aggSound-change, 0);
+    aggSound = Math.max(aggSound-changeDown, 0);
   }
 
   return aggSound;
 }
 void readSerial() {
   println("asdasd");
-  while (sss.available()>0) {
+  while (sss.available ()>0) {
     println(sss.readChar());
   }
 }
