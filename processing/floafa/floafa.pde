@@ -11,7 +11,7 @@ int fps = 60; // frames (i.e. calls to draw()) per second
 float[] cSpc; // Current spectrum array
 //SerialCom serial;  
 Serial sss;  // Serial connection
-boolean sendToArduino = false;
+boolean sendToArduino = true;
 int c;
 color from, to;  // Color scale
 float aggSound;  // The aggregated sound value (increases if the volume is constant/high over time)
@@ -50,7 +50,7 @@ void draw() {
   //println(spc[0]);
   float[] lvls = getLevels(); //Doesn't seem to be used atm
 
-  println(updateAggSound());
+  updateAggSound();
 
   background(0, 0, 0);
 
@@ -68,10 +68,14 @@ void draw() {
     }
 
     // Calculate brightness from spectrum
-    float brightness = Math.min(cSpc[i]/specmax, 0.3);
+    float brightness = Math.max(cSpc[i]/specmax, 0.3);
 
     // Calculate color that changes over time
-    color thiscolor = lerpColor(from, to, cSpc[i]/specmax);
+    colorMode(RGB, 255);
+    color thiscolor = lerpColor(from, to, aggSound);
+    colorMode(HSB, 1.0);
+    thiscolor = color(hue(thiscolor), brightness, saturation(thiscolor));
+    colorMode(RGB, 255);
     colors[i][0] = red(thiscolor);
     colors[i][1] = green(thiscolor);
     colors[i][2] = blue(thiscolor);
@@ -133,7 +137,7 @@ float updateAggSound() {
   int coolDownPeriod = 30;  // Number of seconds for "cooldown"
   float level = LiveInput.getLevel();
   float threshold = 0.3;  // If level is above this, increase aggSound else decrease
-println(level);
+
   float change = 1/coolDownPeriod/fps;  // How much to change at each update
   if (level >= threshold) {
     aggSound = Math.min(aggSound+change, 1);

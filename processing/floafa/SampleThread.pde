@@ -15,8 +15,8 @@ class SampleThread extends Thread {
   void start() {
     LiveInput.start(samples);
     Sample s = new Sample("chimes.wav");
-    s.connectLiveInput(true);
-    s.play();
+    //    s.connectLiveInput(true);
+    //    s.play();
     LiveInput.getSpectrum();
     spc = LiveInput.spectrum;
     running = true;
