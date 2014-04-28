@@ -27,7 +27,7 @@ void setup() {
   //  }
 
   if (sendToArduino) {
-    new Serial(this, Serial.list()[5], 9600);
+    sss= new Serial(this, Serial.list()[5], 9600);
   }
 
   // Set color of interpolation
@@ -68,13 +68,13 @@ void draw() {
     }
 
     // Calculate brightness from spectrum
-    float brightness = Math.max(cSpc[i]/specmax, 0.3);
+    float brightness = Math.max(cSpc[i]/specmax, 0.5);
 
     // Calculate color that changes over time
     colorMode(RGB, 255);
     color thiscolor = lerpColor(from, to, aggSound);
     colorMode(HSB, 1.0);
-    thiscolor = color(hue(thiscolor), brightness, saturation(thiscolor));
+    thiscolor = color(hue(thiscolor), 1, brightness);
     colorMode(RGB, 255);
     colors[i][0] = red(thiscolor);
     colors[i][1] = green(thiscolor);
@@ -150,7 +150,7 @@ float updateAggSound() {
 }
 void readSerial() {
   println("asdasd");
-  while (sss.available ()>0) {
+  while (sss.available()>0) {
     println(sss.readChar());
   }
 }
