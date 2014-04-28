@@ -15,6 +15,7 @@ boolean sendToArduino = true;
 int c;
 color from = color(0, 29, 255);
 color to = color(255, 55, 42);
+int specmax = 2000;
 
 void setup() {
   size(w, h);
@@ -47,12 +48,12 @@ void draw() {
   // Let's make a line
   float[][] colors = new float[samples][3];
   for (int i = 0; i < cSpc.length; i++) {
-    if (cSpc[i] > 2000){
-      cSpc[i] = 2000;
+    if (cSpc[i] > specmax){
+      cSpc[i] = specmax;
     }
     // Calculate color from spectrum
     
-    color thiscolor = lerpColor(from, to, cSpc[i]/2000);
+    color thiscolor = lerpColor(from, to, cSpc[i]/specmax);
     colors[i][0] = red(thiscolor);
     colors[i][1] = green(thiscolor);
     colors[i][2] = blue(thiscolor);
@@ -69,7 +70,7 @@ void draw() {
   }
 
   for (int i = 0; i < cSpc.length; i++) {
-    line(i*(w/cSpc.length), 0, (i+1)*(w/cSpc.length), h-cSpc[i]/10);
+    line(i*(w/cSpc.length), 0, (i+1)*(w/cSpc.length), h-h*cSpc[i]/specmax);
   }
 
   if (sendToArduino) {
