@@ -5,7 +5,7 @@ Sample bubbles;
 SampleThread sThread;
 
 int w=1000, h=100;
-int sps = 5; // desired samples per second
+int sps = 10; // desired samples per second
 int samples = 8; // detail level for spectrum (power of 2)
 int fps = 60; // frames (i.e. calls to draw()) per second
 float[] cSpc; // Current spectrum array
@@ -16,6 +16,9 @@ int c;
 color from, to;  // Color scale
 float aggSound;  // The aggregated sound value (increases if the volume is constant/high over time)
 float specmax = 2000.0;  // maximum allowed value for a spectrum index
+
+boolean pulsate = false;
+float pulseValue; // Brightness value for pulse
 
 void setup() {
   size(w, h);
@@ -34,6 +37,8 @@ void setup() {
   colorMode(RGB, 255);
   from = color(0, 29, 255);
   to = color(255, 55, 42);
+
+  pulseValue = 0.0;
 
   // Start thread to sample the spectrum "sps" times a second
   sThread = new SampleThread(sps, samples);
@@ -68,7 +73,7 @@ void draw() {
     }
 
     // Calculate brightness from spectrum
-    float brightness = Math.max(cSpc[i]/specmax, 0.2);
+    float brightness = getBrightness(cSpc[i]/specmax);
 
     // Calculate color that changes over time
     color thiscolor = lerpColor(from, to, aggSound);
@@ -83,9 +88,9 @@ void draw() {
 
     /*
     colors[i][0] = cSpc[i]/2000*255;*/
-     println("Red: "+ colors[i][0] + ", original: " + cSpc[i]);
-     println("Green: " + colors[i][1] + ", original: " + cSpc[(i+1)%cSpc.length]);
-     println("Blue: " + colors[i][2] + ", original: " + cSpc[(i+2)%cSpc.length]);
+    println("Red: "+ colors[i][0] + ", original: " + cSpc[i]);
+    println("Green: " + colors[i][1] + ", original: " + cSpc[(i+1)%cSpc.length]);
+    println("Blue: " + colors[i][2] + ", original: " + cSpc[(i+2)%cSpc.length]);
     fill(colors[i][0], colors[i][1], colors[i][2]);
     rect(i*(w/cSpc.length), 0, w/cSpc.length, h);
   }
@@ -147,6 +152,19 @@ float updateAggSound() {
   }
 
   return aggSound;
+}
+
+float getBrightness(float specBrightness) {  
+  if (pulsate) {
+    float period = 7; // Period in second
+    float range = 0.2; // Maxmimum +/- of pulse
+    pulseValue += 1.0/60.0/5.0;
+    float pulseBrightness = (float)Math.sin(pulseValue)*range;
+    return Math.max(specBrightness+pulseBrightness, 0.0);
+  }
+  else {
+    return Math.max(specBrightness,0.2);
+  }
 }
 void readSerial() {
   println("asdasd");
