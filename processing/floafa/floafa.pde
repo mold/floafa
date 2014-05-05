@@ -5,7 +5,7 @@ Sample bubbles;
 SampleThread sThread;
 
 int w=1000, h=100;
-int sps = 10; // desired samples per second
+int sps = 30; // desired samples per second
 int samples = 8; // detail level for spectrum (power of 2)
 int fps = 60; // frames (i.e. calls to draw()) per second
 float[] cSpc; // Current spectrum array
@@ -17,8 +17,9 @@ color from, to;  // Color scale
 float aggSound;  // The aggregated sound value (increases if the volume is constant/high over time)
 float specmax = 2000.0;  // maximum allowed value for a spectrum index
 
-boolean pulsate = false;
+boolean pulsate = true;
 float pulseValue; // Brightness value for pulse
+float hueValue; // Hue variation value
 
 void setup() {
   size(w, h);
@@ -37,8 +38,11 @@ void setup() {
   colorMode(RGB, 255);
   from = color(0, 29, 255);
   to = color(255, 55, 42);
+  //from = color(3, 193, 255);
+  //to = color(255, 167, 0);
 
   pulseValue = 0.0;
+  hueValue = 0.0;
 
   // Start thread to sample the spectrum "sps" times a second
   sThread = new SampleThread(sps, samples);
@@ -79,7 +83,7 @@ void draw() {
     color thiscolor = lerpColor(from, to, aggSound);
     colorMode(HSB, 1.0);
     println(hue(thiscolor));
-    thiscolor = color(hue(thiscolor), 1, brightness);
+    thiscolor = color((float)(hue(thiscolor)+getHueVariation()), 1, brightness);
     colorMode(RGB, 255);
     colors[i][0] = red(thiscolor);
     colors[i][1] = green(thiscolor);
@@ -137,10 +141,10 @@ void sendColors(float[][] colors) {
  * Updates the aggSound variable to get the color spectrum
  */
 float updateAggSound() {
-  int coolDownPeriodShort = 2;  // Number of seconds for "cooldown"
-  int coolDownPeriodLong = 5;
+  int coolDownPeriodShort = 3;  // Number of seconds for "cooldown"
+  int coolDownPeriodLong = 7;
   float level = LiveInput.getLevel();
-  float threshold = 0.03;  // If level is above this, increase aggSound else decrease
+  float threshold = 0.04;  // If level is above this, increase aggSound else decrease
   float changeUp = 1.0/coolDownPeriodLong/fps;
   float changeDown = 1.0/coolDownPeriodShort/fps;  // How much to change at each update
 
@@ -158,14 +162,22 @@ float getBrightness(float specBrightness) {
   if (pulsate) {
     float period = 7; // Period in second
     float range = 0.2; // Maxmimum +/- of pulse
-    pulseValue += 1.0/60.0/5.0;
+    pulseValue += 1.0/60.0/period;
     float pulseBrightness = (float)Math.sin(pulseValue)*range;
-    return Math.max(specBrightness+pulseBrightness, 0.0);
+    return Math.max(specBrightness+pulseBrightness, 0.1);
   }
   else {
-    return Math.max(specBrightness,0.2);
+    return Math.max(specBrightness, 0.2);
   }
 }
+
+float getHueVariation() {
+  float period = 120; // Period in second
+  float range = 0.1; // Maxmimum +/- of pulse
+  hueValue += 1.0/60.0/period;
+  return(float)Math.sin(pulseValue)*range;
+}
+
 void readSerial() {
   println("asdasd");
   while (sss.available ()>0) {
