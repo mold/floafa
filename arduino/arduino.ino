@@ -7,7 +7,7 @@ int redPin = 11;
 int greenPin = 10;
 int bluePin = 9;
 
-int pins[][3] = {{11,10,9},{16,15,14},{19,18,17}};
+int pins[][3] = {{11,10,9},{6,5,3},{19,18,17}};
 
 //uncomment this line if using a Common Anode LED
 #define COMMON_ANODE
@@ -43,19 +43,18 @@ void loop()
       }
     }
     Serial.flush();
-
   }
 
-  //  setColor(0, 29, 255);  // red
-  //  delay(3000);
-  //  setColor(74, 12, 232);  // green
-  //  delay(3000);
-  //  setColor(174, 0, 255);  // blue
-  //  delay(3000);
-  //  setColor(232, 12, 197);  // yellow
-  //  delay(3000);  
-  //  setColor(255, 55, 42);  // purple
-  //  delay(3000);
+//  setColor(255, 0, 0, 0);
+//  setColor(255, 0, 0, 1);
+//  delay(1000);        
+//  setColor(0, 255, 0, 0);
+//  setColor(0, 255, 0, 1);
+//  delay(1000);
+//  setColor(0, 0, 255, 0);
+//  setColor(0, 0, 255, 1);
+//  delay(1000);
+
 }
 
 void setColor(int red, int green, int blue, int ledIndex)

@@ -38,8 +38,6 @@ void setup() {
   colorMode(RGB, 255);
   from = color(0, 29, 255);
   to = color(255, 55, 42);
-  //from = color(3, 193, 255);
-  //to = color(255, 167, 0);
 
   pulseValue = 0.0;
   hueValue = 0.0;
@@ -83,7 +81,7 @@ void draw() {
     color thiscolor = lerpColor(from, to, aggSound);
     colorMode(HSB, 1.0);
     println(hue(thiscolor));
-    thiscolor = color((float)(hue(thiscolor)+getHueVariation()), 1, brightness);
+    thiscolor = color((float)(hue(thiscolor)+getHueVariation()+0.1*i)%1.0, 1, brightness);
     colorMode(RGB, 255);
     colors[i][0] = red(thiscolor);
     colors[i][1] = green(thiscolor);
@@ -128,9 +126,10 @@ void sendColors(float[][] colors) {
   if ((c++)>1) {
     for (int i = 0; i < colors.length; i++) {
       // send rgb values!
+      sss.write((int)Math.round(colors[i][2]));      
       sss.write((int)Math.round(colors[i][0]));
       sss.write((int)Math.round(colors[i][1]));
-      sss.write((int)Math.round(colors[i][2]));
+
     }
     c=0;
   }
@@ -173,7 +172,7 @@ float getBrightness(float specBrightness) {
 
 float getHueVariation() {
   float period = 120; // Period in second
-  float range = 0.1; // Maxmimum +/- of pulse
+  float range = 0.0; // Maxmimum +/- of pulse
   hueValue += 1.0/60.0/period;
   return(float)Math.sin(pulseValue)*range;
 }
